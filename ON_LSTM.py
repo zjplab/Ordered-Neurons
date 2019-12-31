@@ -93,10 +93,10 @@ class ONLSTMCell(nn.Module):
         cingate = cingate[:, :, None] #(-1, n_chunk, 1)
         cforgetgate = cforgetgate[:, :, None] #(-1, n_chunk, 1)
 
-        ingate = F.sigmoid(ingate)
-        forgetgate = F.sigmoid(forgetgate)
-        cell = F.tanh(cell)
-        outgate = F.sigmoid(outgate)
+        ingate = torch.sigmoid(ingate)
+        forgetgate = torch.sigmoid(forgetgate)
+        cell = torch.tanh(cell)
+        outgate = torch.sigmoid(outgate)
 
         # cy = cforgetgate * forgetgate * cx + cingate * ingate * cell
 
@@ -105,8 +105,8 @@ class ONLSTMCell(nn.Module):
         ingate = ingate * overlap + (cingate - overlap)
         cy = forgetgate * cx + ingate * cell
 
-        # hy = outgate * F.tanh(self.c_norm(cy))
-        hy = outgate * F.tanh(cy)
+        # hy = outgate * torch.tanh(self.c_norm(cy))
+        hy = outgate * torch.tanh(cy)
         return hy.view(-1, self.hidden_size), cy, (distance_cforget, distance_cin)
 
     def init_hidden(self, bsz):
