@@ -36,7 +36,7 @@ class LinearDropConnect(nn.Linear):
                 self.weight.size(),
                 dtype=torch.uint8
             )
-            mask.bernoulli_(self.dropout)
+            mask.bernoulli_(self.dropout).type(torch.bool)
             self._weight = self.weight.masked_fill(mask, 0.)
 
     def forward(self, input, sample_mask=False):
@@ -74,23 +74,24 @@ class ONLSTMCell(nn.Module):
 
     def forward(self, input, hidden,
                 transformed_input=None):
-        hx, cx = hidden
+        hx, cx = hidden #hidden states, cell states
 
         if transformed_input is None:
-            transformed_input = self.ih(input)
+            transformed_input = self.ih(input) # 4 * hidden_size + self.n_chunk * 2
 
-        gates = transformed_input + self.hh(hx)
-        cingate, cforgetgate = gates[:, :self.n_chunk*2].chunk(2, 1)
+        gates = transformed_input + self.hh(hx) # 4 * hidden_size + self.n_chunk * 2
+        cingate, cforgetgate = gates[:, :self.n_chunk*2].chunk(2, 1) # chunk(chunk_num, dim) (-1, n_chunk)
         outgate, cell, ingate, forgetgate = gates[:,self.n_chunk*2:].view(-1, self.n_chunk*4, self.chunk_size).chunk(4,1)
+        # (-1, 4*hidden_size)-> (-1, n_chunk, chunk_size)*4 
 
-        cingate = 1. - cumsoftmax(cingate)
-        cforgetgate = cumsoftmax(cforgetgate)
+        cingate = 1. - cumsoftmax(cingate) #master input gate
+        cforgetgate = cumsoftmax(cforgetgate) #master forget gate
 
         distance_cforget = 1. - cforgetgate.sum(dim=-1) / self.n_chunk
         distance_cin = cingate.sum(dim=-1) / self.n_chunk
 
-        cingate = cingate[:, :, None]
-        cforgetgate = cforgetgate[:, :, None]
+        cingate = cingate[:, :, None] #(-1, n_chunk, 1)
+        cforgetgate = cforgetgate[:, :, None] #(-1, n_chunk, 1)
 
         ingate = F.sigmoid(ingate)
         forgetgate = F.sigmoid(forgetgate)
@@ -99,7 +100,7 @@ class ONLSTMCell(nn.Module):
 
         # cy = cforgetgate * forgetgate * cx + cingate * ingate * cell
 
-        overlap = cforgetgate * cingate
+        overlap = cforgetgate * cingate #omega_t, overlap part
         forgetgate = forgetgate * overlap + (cforgetgate - overlap)
         ingate = ingate * overlap + (cingate - overlap)
         cy = forgetgate * cx + ingate * cell
