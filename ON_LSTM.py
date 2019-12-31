@@ -34,9 +34,9 @@ class LinearDropConnect(nn.Linear):
         else:
             mask = self.weight.new_empty(
                 self.weight.size(),
-                dtype=torch.uint8
+                dtype=torch.bool
             )
-            mask.bernoulli_(self.dropout).type(torch.bool)
+            mask.bernoulli_(self.dropout)
             self._weight = self.weight.masked_fill(mask, 0.)
 
     def forward(self, input, sample_mask=False):
