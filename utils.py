@@ -52,6 +52,11 @@ def evalb(pred_tree_list, targ_tree_list):
     temp_targ_path = os.path.join(temp_path.name, "true_trees.txt")
     temp_eval_path = os.path.join(temp_path.name, "evals.txt")
 
+    try:
+        os.mkdir(temp_path.name)
+    except Exception:
+        pass
+    
     print("Temp: {}, {}".format(temp_file_path, temp_targ_path))
     temp_tree_file = open(temp_file_path, "w")
     temp_targ_file = open(temp_targ_path, "w")
