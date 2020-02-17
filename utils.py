@@ -57,7 +57,7 @@ def evalb(pred_tree_list, targ_tree_list):
         os.makedirs(temp_path.name)
         print("The folder {} created".format(temp_path.name))
     except FileExistsError:
-        print("The folder {} already exists!").format(temp_path.name)
+        print("The folder {} already exists!".format(temp_path.name))
     
     print("Temp: {}, {}".format(temp_file_path, temp_targ_path))
     temp_tree_file = open(temp_file_path, "w")
