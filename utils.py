@@ -1,5 +1,5 @@
 import torch
-
+import os
 
 def repackage_hidden(h):
     """Wraps hidden states in new Tensors,
@@ -54,7 +54,7 @@ def evalb(pred_tree_list, targ_tree_list):
 
     print("About to create the folder:{}".format(temp_path.name))
     try:
-        os.mkdirs(temp_path.name)
+        os.makedirs(temp_path.name)
         print("The folder {} created".format(temp_path.name))
     except FileExistsError:
         print("The folder {} already exists!").format(temp_path.name)
