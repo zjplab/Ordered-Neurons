@@ -83,6 +83,9 @@ def evalb(pred_tree_list, targ_tree_list):
     temp_targ_file.close()
 
     evalb_dir = os.path.join(os.getcwd(), "EVALB")
+    
+    if not os.path.exists(evalb_dir):
+        os.makedirs(evalb_dir)
     evalb_param_path = os.path.join(evalb_dir, "COLLINS.prm")
     evalb_program_path = os.path.join(evalb_dir, "evalb")
     command = "{} -p {} {} {} > {}".format(
