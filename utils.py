@@ -52,8 +52,10 @@ def evalb(pred_tree_list, targ_tree_list):
     temp_targ_path = os.path.join(temp_path.name, "true_trees.txt")
     temp_eval_path = os.path.join(temp_path.name, "evals.txt")
 
+    print("About to create the folder:{}".format(temp_path.name))
     try:
         os.mkdirs(temp_path.name)
+        print("The folder {} created".format(temp_path.name))
     except FileExistsError:
         print("The folder {} already exists!").format(temp_path.name)
     
