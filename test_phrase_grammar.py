@@ -3,6 +3,7 @@ import re
 
 import matplotlib.pyplot as plt
 import nltk
+import numpy as np
 import numpy
 import torch
 import torch.nn as nn
