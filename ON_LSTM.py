@@ -135,7 +135,7 @@ class ONLSTMStack(nn.Module):
         return [c.init_hidden(bsz) for c in self.cells]
 
     def forward(self, input, hidden):
-        length, batch_size, _ = input.size()
+        length, batch_size, _ = input.size() #emd
 
         if self.training:
             for c in self.cells:
